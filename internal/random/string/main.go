@@ -233,3 +233,15 @@ func calcNextArr(needle string) []int {
 
 	return next
 }
+
+// 459. 重复的子字符串
+// https://leetcode.cn/problems/repeated-substring-pattern/
+func repeatedSubstringPattern(s string) bool {
+	// 使用查询方法
+	if len(s) <= 1 {
+		return false
+	}
+
+	repeatStr := s[1:] + s[:len(s)-1]
+	return strings.Contains(repeatStr, s)
+}

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 )
 
@@ -177,6 +176,54 @@ func calcNextIdx(x, y int, matrix [][]int, direction int) (nextX, nextY, nextDir
 	return x, y, direction
 }
 
-func main() {
-	fmt.Println(generateMatrix(3))
+// 59. 螺旋矩阵 II
+// https://leetcode.cn/problems/spiral-matrix-ii
+func generateMatrixWithLoop(n int) [][]int {
+	matrix := make([][]int, n)
+	for i := 0; i < n; i++ {
+		matrix[i] = make([]int, n)
+	}
+
+	times := n / 2
+	count := 1
+	offset := 1
+	startX, startY := 0, 0
+	for i := 0; i < times; i++ {
+		nextX, nextY := startX, startY
+		// 从左到右
+		for ; nextY < n-offset; nextY++ {
+			matrix[nextX][nextY] = count
+			count++
+		}
+
+		// 从上到下
+		for ; nextX < n-offset; nextX++ {
+			matrix[nextX][nextY] = count
+			count++
+		}
+
+		// 从右到左
+		for ; nextY > startY; nextY-- {
+			matrix[nextX][nextY] = count
+			count++
+		}
+
+		// 从下到上
+		for ; nextX > startX; nextX-- {
+			matrix[nextX][nextY] = count
+			count++
+		}
+
+		startX++
+		startY++
+
+		offset++
+	}
+
+	if n%2 == 1 {
+		mid := n / 2
+		matrix[mid][mid] = count
+	}
+
+	return matrix
 }
