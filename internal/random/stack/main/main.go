@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sort"
 	"strconv"
 )
 
@@ -218,4 +219,24 @@ func push(q []int, num int) []int {
 
 	q = append(q, num)
 	return q
+}
+
+// 347. 前 K 个高频元素
+// https://leetcode.cn/problems/top-k-frequent-elements
+func topKFrequent(nums []int, k int) []int {
+	m := make(map[int]int, len(nums))
+	for _, num := range nums {
+		m[num]++
+	}
+
+	ans := make([]int, 0, len(m))
+	for key := range m {
+		ans = append(ans, key)
+	}
+
+	sort.Slice(ans, func(i, j int) bool {
+		return m[ans[i]] > m[ans[j]]
+	})
+
+	return ans[:k]
 }
