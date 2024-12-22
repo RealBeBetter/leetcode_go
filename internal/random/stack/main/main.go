@@ -102,6 +102,7 @@ func maxSlidingWindow(nums []int, k int) []int {
 	ans[idx] = maxVal
 	idx++
 
+	// 使用遍历的方式解决，用有限的临时变量存储上一个最值
 	for i, j := 1, k; j < len(nums); i, j = i+1, j+1 {
 		if maxIdx == i-1 {
 			maxVal, maxIdx = calcMax(nums, i, j)
@@ -133,6 +134,9 @@ func calcMax(nums []int, i, j int) (maxVal, maxIdx int) {
 	return
 }
 
+// 239. 滑动窗口最大值
+// https://leetcode.cn/problems/sliding-window-maximum
+
 type Queue []int
 
 func (q *Queue) Push(x int) {
@@ -157,8 +161,6 @@ func (q *Queue) Size() int {
 	return len(*q)
 }
 
-// 239. 滑动窗口最大值
-// https://leetcode.cn/problems/sliding-window-maximum
 func maxSlidingWindowWithMonotoneStack(nums []int, k int) []int {
 	ans := make([]int, 0, len(nums))
 	q := Queue{}
@@ -174,4 +176,46 @@ func maxSlidingWindowWithMonotoneStack(nums []int, k int) []int {
 	}
 
 	return ans
+}
+
+// 239. 滑动窗口最大值
+// https://leetcode.cn/problems/sliding-window-maximum
+func maxSlidingWindowWithSlice(nums []int, k int) []int {
+	// 构造一个非严格单调递减的队列
+	q := make([]int, 0, len(nums))
+	for i := 0; i < k; i++ {
+		q = push(q, nums[i])
+	}
+
+	ans := make([]int, 0, len(nums))
+	ans = append(ans, q[0])
+	for i := k; i < len(nums); i++ {
+		q = pop(q, nums[i-k])
+		q = push(q, nums[i])
+		ans = append(ans, q[0])
+	}
+
+	return ans
+}
+
+func pop(q []int, num int) []int {
+	if q[0] == num {
+		q = q[1:]
+	}
+
+	return q
+}
+
+func push(q []int, num int) []int {
+	if len(q) == 0 {
+		q = append(q, num)
+		return q
+	}
+
+	for len(q) > 0 && q[len(q)-1] < num {
+		q = q[:len(q)-1]
+	}
+
+	q = append(q, num)
+	return q
 }
