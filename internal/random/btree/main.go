@@ -258,3 +258,62 @@ func postorderTraversalByUnified(root *TreeNode) []int {
 
 	return res
 }
+
+// 102. 二叉树的层序遍历
+// https://leetcode.cn/problems/binary-tree-level-order-traversal/
+func levelOrder(root *TreeNode) [][]int {
+	res := make([][]int, 0)
+	if root == nil {
+		return res
+	}
+
+	curLevel := []*TreeNode{root}
+
+	for len(curLevel) > 0 {
+		curValues := make([]int, 0)
+		nextLevel := make([]*TreeNode, 0)
+		for i := 0; i < len(curLevel); i++ {
+			if curLevel[i] == nil {
+				continue
+			}
+
+			curValues = append(curValues, curLevel[i].Val)
+			nextLevel = append(nextLevel, curLevel[i].Left)
+			nextLevel = append(nextLevel, curLevel[i].Right)
+		}
+
+		curLevel = nextLevel
+		if len(curValues) > 0 {
+			res = append(res, curValues)
+		}
+	}
+
+	return res
+}
+
+// 102. 二叉树的层序遍历
+// https://leetcode.cn/problems/binary-tree-level-order-traversal/
+func levelOrderWithRecursion(root *TreeNode) [][]int {
+	var res [][]int
+
+	depth := 0
+
+	var order func(root *TreeNode, depth int)
+	order = func(root *TreeNode, depth int) {
+		if root == nil {
+			return
+		}
+
+		if len(res) == depth {
+			res = append(res, []int{})
+		}
+		res[depth] = append(res[depth], root.Val)
+
+		order(root.Left, depth+1)
+		order(root.Right, depth+1)
+	}
+
+	order(root, depth)
+
+	return res
+}
