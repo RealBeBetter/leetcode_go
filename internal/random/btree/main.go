@@ -317,3 +317,67 @@ func levelOrderWithRecursion(root *TreeNode) [][]int {
 
 	return res
 }
+
+// 107. 二叉树的层序遍历 II
+// https://leetcode.cn/problems/binary-tree-level-order-traversal-ii/
+func levelOrderBottom(root *TreeNode) [][]int {
+	if root == nil {
+		return [][]int{}
+	}
+
+	res := make([][]int, 0)
+	level := []*TreeNode{root}
+
+	for len(level) > 0 {
+		next := make([]*TreeNode, 0, 2*len(level))
+		values := make([]int, 0, 2*len(level))
+		for i := 0; i < len(level); i++ {
+			if level[i] == nil {
+				continue
+			}
+
+			values = append(values, level[i].Val)
+			next = append(next, level[i].Left)
+			next = append(next, level[i].Right)
+		}
+
+		if len(values) > 0 {
+			res = append(res, values)
+		}
+
+		level = next
+	}
+
+	slices.Reverse(res)
+	return res
+}
+
+// 107. 二叉树的层序遍历 II
+// https://leetcode.cn/problems/binary-tree-level-order-traversal-ii/
+func levelOrderBottomWithRecursion(root *TreeNode) [][]int {
+	if root == nil {
+		return [][]int{}
+	}
+
+	depth := 0
+	res := make([][]int, 0)
+
+	var order func(root *TreeNode, depth int)
+	order = func(root *TreeNode, depth int) {
+		if root == nil {
+			return
+		}
+
+		if len(res) == depth {
+			res = append(res, []int{})
+		}
+		res[depth] = append(res[depth], root.Val)
+		order(root.Left, depth+1)
+		order(root.Right, depth+1)
+	}
+
+	order(root, depth)
+	slices.Reverse(res)
+
+	return res
+}
