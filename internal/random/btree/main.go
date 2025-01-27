@@ -381,3 +381,67 @@ func levelOrderBottomWithRecursion(root *TreeNode) [][]int {
 
 	return res
 }
+
+// 199. 二叉树的右视图
+// https://leetcode.cn/problems/binary-tree-right-side-view/
+func rightSideView(root *TreeNode) []int {
+	res := make([]int, 0)
+	if root == nil {
+		return res
+	}
+
+	level := []*TreeNode{root}
+	for len(level) > 0 {
+		var right *TreeNode
+
+		next := make([]*TreeNode, 0, 2*len(level))
+		for i := 0; i < len(level); i++ {
+			if level[i] == nil {
+				continue
+			}
+
+			right = level[i]
+			next = append(next, level[i].Left)
+			next = append(next, level[i].Right)
+		}
+
+		level = next
+		if right != nil {
+			res = append(res, right.Val)
+		}
+	}
+
+	return res
+}
+
+// 199. 二叉树的右视图
+// https://leetcode.cn/problems/binary-tree-right-side-view/
+func rightSideViewWithRecursion(root *TreeNode) []int {
+	res := make([]int, 0)
+	if root == nil {
+		return res
+	}
+
+	depth := 0
+	var order func(root *TreeNode, depth int)
+	order = func(root *TreeNode, depth int) {
+		if root == nil {
+			return
+		}
+
+		if len(res) == depth {
+			res = append(res, root.Val)
+		} else {
+			// 如果非第一个值，则表示非这一层的值
+			// 那么后面遍历到的值，相比这个位置已有的值，更靠右边
+			res[depth] = root.Val
+		}
+
+		order(root.Left, depth+1)
+		order(root.Right, depth+1)
+	}
+
+	order(root, depth)
+
+	return res
+}
