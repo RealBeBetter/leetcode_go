@@ -445,3 +445,75 @@ func rightSideViewWithRecursion(root *TreeNode) []int {
 
 	return res
 }
+
+// 637. 二叉树的层平均值
+// https://leetcode.cn/problems/average-of-levels-in-binary-tree/
+func averageOfLevels(root *TreeNode) []float64 {
+	if root == nil {
+		return []float64{}
+	}
+
+	res := make([]float64, 0)
+	level := []*TreeNode{root}
+	for len(level) > 0 {
+		next := make([]*TreeNode, 0, 2*len(level))
+		sum := 0.0
+		for i := 0; i < len(level); i++ {
+			sum += float64(level[i].Val)
+			if level[i].Left != nil {
+				next = append(next, level[i].Left)
+			}
+			if level[i].Right != nil {
+				next = append(next, level[i].Right)
+			}
+		}
+
+		avg := sum / float64(len(level))
+		res = append(res, avg)
+
+		level = next
+	}
+
+	return res
+}
+
+// 637. 二叉树的层平均值
+// https://leetcode.cn/problems/average-of-levels-in-binary-tree/
+func averageOfLevelsWithRecursion(root *TreeNode) []float64 {
+	if root == nil {
+		return []float64{}
+	}
+
+	nums := make([][]float64, 0)
+
+	var order func(root *TreeNode, depth int)
+	order = func(root *TreeNode, depth int) {
+		if root == nil {
+			return
+		}
+
+		if depth == len(nums) {
+			nums = append(nums, []float64{float64(root.Val)})
+		} else {
+			nums[depth] = append(nums[depth], float64(root.Val))
+		}
+
+		order(root.Left, depth+1)
+		order(root.Right, depth+1)
+	}
+
+	depth := 0
+	order(root, depth)
+
+	res := make([]float64, len(nums))
+	for i, num := range nums {
+		sum := 0.0
+		for _, n := range num {
+			sum += n
+		}
+
+		res[i] = sum / float64(len(num))
+	}
+
+	return res
+}
