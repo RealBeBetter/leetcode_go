@@ -517,3 +517,66 @@ func averageOfLevelsWithRecursion(root *TreeNode) []float64 {
 
 	return res
 }
+
+// 429. N 叉树的层序遍历
+// https://leetcode.cn/problems/n-ary-tree-level-order-traversal/
+func levelOrderOfNary(root *Node) [][]int {
+	if root == nil {
+		return [][]int{}
+	}
+
+	res := make([][]int, 0)
+	level := []*Node{root}
+	for len(level) > 0 {
+		nums := make([]int, 0, 2*len(level))
+		next := make([]*Node, 0, 2*len(level))
+		for i := 0; i < len(level); i++ {
+			if level[i] == nil {
+				continue
+			}
+
+			nums = append(nums, level[i].Val)
+			next = append(next, level[i].Children...)
+		}
+
+		if len(nums) > 0 {
+			res = append(res, nums)
+		}
+		level = next
+	}
+
+	return res
+}
+
+// 429. N 叉树的层序遍历
+// https://leetcode.cn/problems/n-ary-tree-level-order-traversal/
+func levelOrderOfNaryWithRecursion(root *Node) [][]int {
+	if root == nil {
+		return [][]int{}
+	}
+
+	depth := 0
+	res := make([][]int, 0)
+
+	var order func(root *Node, depth int)
+	order = func(root *Node, depth int) {
+		if root == nil {
+			return
+		}
+
+		if len(res) == depth {
+			res = append(res, []int{root.Val})
+		} else {
+			res[depth] = append(res[depth], root.Val)
+		}
+
+		children := root.Children
+		for i := 0; i < len(children); i++ {
+			order(children[i], depth+1)
+		}
+	}
+
+	order(root, depth)
+
+	return res
+}
