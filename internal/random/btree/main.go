@@ -1,6 +1,9 @@
 package btree
 
-import "slices"
+import (
+	"math"
+	"slices"
+)
 
 // 144. 二叉树的前序遍历
 // https://leetcode.cn/problems/binary-tree-preorder-traversal/
@@ -644,5 +647,123 @@ func largestValuesWithRecursion(root *TreeNode) []int {
 	depth := 0
 	order(root, depth)
 
+	return res
+}
+
+// 104. 二叉树的最大深度
+// https://leetcode.cn/problems/maximum-depth-of-binary-tree
+func maxDepth(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+
+	res := 0
+	level := []*TreeNode{root}
+	for len(level) > 0 {
+		res++
+		next := make([]*TreeNode, 0)
+		for i := 0; i < len(level); i++ {
+			if level[i].Left != nil {
+				next = append(next, level[i].Left)
+			}
+			if level[i].Right != nil {
+				next = append(next, level[i].Right)
+			}
+		}
+
+		level = next
+	}
+
+	return res
+}
+
+// 104. 二叉树的最大深度
+// https://leetcode.cn/problems/maximum-depth-of-binary-tree
+func maxDepthWithRecursion(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+
+	res := 0
+	var order func(root *TreeNode, depth int)
+	order = func(root *TreeNode, depth int) {
+		if root == nil {
+			return
+		}
+
+		res = max(res, depth)
+
+		order(root.Left, depth+1)
+		order(root.Right, depth+1)
+	}
+
+	// 开始遍历时，最低层数是 1
+	depth := 1
+	order(root, depth)
+	return res
+}
+
+// 111. 二叉树的最小深度
+// https://leetcode.cn/problems/minimum-depth-of-binary-tree
+func minDepth(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+
+	res := 0
+	level := []*TreeNode{root}
+	for len(level) > 0 {
+		end := false
+		next := make([]*TreeNode, 0)
+		for i := 0; i < len(level); i++ {
+			// 左右子节点都为空，表示某条路径已经结束
+			if level[i].Left == nil && level[i].Right == nil {
+				end = true
+				break
+			}
+
+			if level[i].Left != nil {
+				next = append(next, level[i].Left)
+			}
+			if level[i].Right != nil {
+				next = append(next, level[i].Right)
+			}
+		}
+
+		res++
+		level = next
+
+		if end {
+			break
+		}
+	}
+
+	return res
+}
+
+// 111. 二叉树的最小深度
+// https://leetcode.cn/problems/minimum-depth-of-binary-tree
+func minDepthWithRecursion(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+
+	res := math.MaxInt
+	var order func(root *TreeNode, depth int)
+	order = func(root *TreeNode, depth int) {
+		if root == nil {
+			return
+		}
+
+		// 左右子节点都为空，表示某条路径已经结束
+		if root.Left == nil && root.Right == nil {
+			res = min(res, depth)
+		}
+
+		order(root.Left, depth+1)
+		order(root.Right, depth+1)
+	}
+
+	order(root, 1)
 	return res
 }
