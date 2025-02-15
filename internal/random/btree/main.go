@@ -580,3 +580,69 @@ func levelOrderOfNaryWithRecursion(root *Node) [][]int {
 
 	return res
 }
+
+// 515. 在每个树行中找最大值
+// https://leetcode.cn/problems/find-largest-value-in-each-tree-row
+func largestValues(root *TreeNode) []int {
+	if root == nil {
+		return []int{}
+	}
+
+	res := make([]int, 0)
+	level := []*TreeNode{root}
+	for len(level) > 0 {
+		next := make([]*TreeNode, 0)
+
+		maxVal := level[0].Val
+		for i := 0; i < len(level); i++ {
+			if level[i].Val > maxVal {
+				maxVal = level[i].Val
+			}
+
+			if level[i].Left != nil {
+				next = append(next, level[i].Left)
+			}
+
+			if level[i].Right != nil {
+				next = append(next, level[i].Right)
+			}
+		}
+
+		level = next
+		res = append(res, maxVal)
+	}
+
+	return res
+}
+
+// 515. 在每个树行中找最大值
+// https://leetcode.cn/problems/find-largest-value-in-each-tree-row
+func largestValuesWithRecursion(root *TreeNode) []int {
+	if root == nil {
+		return []int{}
+	}
+
+	res := make([]int, 0)
+	var order func(root *TreeNode, depth int)
+	order = func(root *TreeNode, depth int) {
+		if root == nil {
+			return
+		}
+
+		if depth == len(res) {
+			res = append(res, root.Val)
+		} else {
+			if root.Val > res[depth] {
+				res[depth] = root.Val
+			}
+		}
+
+		order(root.Left, depth+1)
+		order(root.Right, depth+1)
+	}
+
+	depth := 0
+	order(root, depth)
+
+	return res
+}
