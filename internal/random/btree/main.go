@@ -767,3 +767,95 @@ func minDepthWithRecursion(root *TreeNode) int {
 	order(root, 1)
 	return res
 }
+
+// 226. 翻转二叉树
+// https://leetcode.cn/problems/invert-binary-tree/description/
+func invertTreeWithPre(root *TreeNode) *TreeNode {
+	if root == nil {
+		return root
+	}
+
+	root.Left, root.Right = root.Right, root.Left
+	invertTreeWithPre(root.Left)
+	invertTreeWithPre(root.Right)
+
+	return root
+}
+
+// 226. 翻转二叉树
+// https://leetcode.cn/problems/invert-binary-tree/description/
+func invertTreeWithPost(root *TreeNode) *TreeNode {
+	if root == nil {
+		return root
+	}
+
+	invertTreeWithPost(root.Left)
+	invertTreeWithPost(root.Right)
+	root.Left, root.Right = root.Right, root.Left
+
+	return root
+}
+
+// 226. 翻转二叉树
+// https://leetcode.cn/problems/invert-binary-tree/description/
+func invertTreeWithMid(root *TreeNode) *TreeNode {
+	if root == nil {
+		return root
+	}
+
+	// 因为中间替换过一次，所以后面遍历的时候需要切换一下节点
+	invertTreeWithMid(root.Left)
+	root.Left, root.Right = root.Right, root.Left
+	invertTreeWithMid(root.Left)
+
+	return root
+}
+
+// 226. 翻转二叉树
+// https://leetcode.cn/problems/invert-binary-tree/description/
+func invertTreeWithLevel(root *TreeNode) *TreeNode {
+	if root == nil {
+		return root
+	}
+
+	level := []*TreeNode{root}
+	for len(level) > 0 {
+		next := make([]*TreeNode, 0, len(level)*2)
+		for i := 0; i < len(level); i++ {
+			level[i].Left, level[i].Right = level[i].Right, level[i].Left
+			if level[i].Left != nil {
+				next = append(next, level[i].Left)
+			}
+
+			if level[i].Right != nil {
+				next = append(next, level[i].Right)
+			}
+		}
+
+		level = next
+	}
+
+	return root
+}
+
+// 226. 翻转二叉树
+// https://leetcode.cn/problems/invert-binary-tree/description/
+func invertTreeWithLevelRecursion(root *TreeNode) *TreeNode {
+	if root == nil {
+		return root
+	}
+
+	var order func(root *TreeNode)
+	order = func(root *TreeNode) {
+		if root == nil {
+			return
+		}
+
+		root.Left, root.Right = root.Right, root.Left
+		order(root.Left)
+		order(root.Right)
+	}
+
+	order(root)
+	return root
+}

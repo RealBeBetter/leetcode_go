@@ -2,6 +2,9 @@ package main
 
 import (
 	"math"
+	"slices"
+	"strconv"
+	"strings"
 )
 
 // 704. 二分查找
@@ -226,4 +229,39 @@ func generateMatrixWithLoop(n int) [][]int {
 	}
 
 	return matrix
+}
+
+// 179. 最大数
+// https://leetcode.cn/problems/largest-number/description/
+func largestNumberWithCustomSort(nums []int) string {
+	if len(nums) == 0 {
+		return ""
+	}
+
+	// 升序排序，需要注意返回的顺序
+	slices.SortFunc(nums, func(a, b int) int {
+		// a > b 时返回正数，a < b 时返回负数，相等返回 0
+		str1 := strconv.Itoa(a)
+		str2 := strconv.Itoa(b)
+
+		// 直接比一下，将大的数放在前面
+		if str1+str2 > str2+str1 {
+			return -1
+		}
+		return 1
+	})
+
+	builder := strings.Builder{}
+	builder.Grow(len(nums))
+	for _, num := range nums {
+		builder.WriteString(strconv.Itoa(num))
+	}
+
+	ans := builder.String()
+	// 多个 0 的情况，直接返回 0
+	if strings.HasPrefix(ans, "0") {
+		return "0"
+	}
+
+	return ans
 }
