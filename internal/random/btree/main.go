@@ -859,3 +859,68 @@ func invertTreeWithLevelRecursion(root *TreeNode) *TreeNode {
 	order(root)
 	return root
 }
+
+// 101. 对称二叉树
+// https://leetcode.cn/problems/symmetric-tree/description/
+func isSymmetric(root *TreeNode) bool {
+	if root == nil {
+		return false
+	}
+
+	level := []*TreeNode{root}
+	for len(level) > 0 {
+		next := make([]*TreeNode, 0)
+		for i, j := 0, len(level)-1; i < j; i, j = i+1, j-1 {
+			if level[i] == nil && level[j] == nil {
+				continue
+			}
+
+			if level[i] == nil || level[j] == nil {
+				return false
+			}
+
+			if level[i] != nil && level[j] != nil {
+				if level[i].Val != level[j].Val {
+					return false
+				}
+			}
+		}
+
+		for i := 0; i < len(level); i++ {
+			if level[i] != nil {
+				next = append(next, level[i].Left)
+				next = append(next, level[i].Right)
+			}
+		}
+
+		level = next
+	}
+
+	return true
+}
+
+// 101. 对称二叉树
+// https://leetcode.cn/problems/symmetric-tree/description/
+func isSymmetricWithRecursion(root *TreeNode) bool {
+	if root == nil {
+		return false
+	}
+
+	var compare func(left *TreeNode, right *TreeNode) bool
+	compare = func(left *TreeNode, right *TreeNode) bool {
+		// 终止条件，当节点均为空，或者有不相等的
+		if left == nil && right == nil {
+			return true
+		} else if left == nil || right == nil {
+			return false
+		} else if left.Val != right.Val {
+			return false
+		}
+
+		outside := compare(left.Left, right.Right)
+		inside := compare(left.Right, right.Left)
+		return inside && outside
+	}
+
+	return compare(root.Left, root.Right)
+}
