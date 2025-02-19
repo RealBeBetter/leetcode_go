@@ -924,3 +924,84 @@ func isSymmetricWithRecursion(root *TreeNode) bool {
 
 	return compare(root.Left, root.Right)
 }
+
+// 101. 对称二叉树
+// https://leetcode.cn/problems/symmetric-tree/description/
+func isSymmetricWithStack(root *TreeNode) bool {
+	if root == nil {
+		return false
+	}
+
+	stack := make([]*TreeNode, 0)
+	stack = append(stack, root.Left)
+	stack = append(stack, root.Right)
+	for len(stack) > 0 {
+		length := len(stack)
+		right := stack[length-1]
+		left := stack[length-2]
+		stack = stack[:length-2]
+
+		if left == nil && right == nil {
+			continue
+		} else if left == nil || right == nil {
+			return false
+		} else if left.Val != right.Val {
+			return false
+		}
+
+		stack = append(stack, left.Left)
+		stack = append(stack, right.Right)
+		stack = append(stack, left.Right)
+		stack = append(stack, right.Left)
+	}
+
+	return true
+}
+
+// 222. 完全二叉树的节点个数
+// https://leetcode.cn/problems/count-complete-tree-nodes/description/
+func countNodes(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+
+	var count func(root *TreeNode) int
+	count = func(root *TreeNode) int {
+		if root == nil {
+			return 0
+		}
+
+		leftCnt := count(root.Left)
+		rightCnt := count(root.Right)
+		return leftCnt + rightCnt + 1
+	}
+
+	return count(root)
+}
+
+// 222. 完全二叉树的节点个数
+// https://leetcode.cn/problems/count-complete-tree-nodes/description/
+func countNodesWithLevel(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+
+	ans := 0
+	level := []*TreeNode{root}
+	for len(level) > 0 {
+		next := make([]*TreeNode, 0)
+		for i := 0; i < len(level); i++ {
+			if level[i].Left != nil {
+				next = append(next, level[i].Left)
+			}
+			if level[i].Right != nil {
+				next = append(next, level[i].Right)
+			}
+			ans++
+		}
+
+		level = next
+	}
+
+	return ans
+}
