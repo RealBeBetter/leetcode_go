@@ -1005,3 +1005,33 @@ func countNodesWithLevel(root *TreeNode) int {
 
 	return ans
 }
+
+// 110. 平衡二叉树
+// https://leetcode.cn/problems/balanced-binary-tree/description/
+func isBalanced(root *TreeNode) bool {
+	if root == nil {
+		return true
+	}
+
+	var calcHeight func(root *TreeNode) int
+	calcHeight = func(root *TreeNode) int {
+		if root == nil {
+			return 0
+		}
+
+		leftHeight := calcHeight(root.Left)
+		rightHeight := calcHeight(root.Right)
+		if leftHeight == -1 || rightHeight == -1 {
+			return -1
+		}
+
+		// 相差大于 1，直接返回
+		if math.Abs(float64(leftHeight-rightHeight)) > 1 {
+			return -1
+		}
+
+		return max(leftHeight, rightHeight) + 1
+	}
+
+	return calcHeight(root) != -1
+}
