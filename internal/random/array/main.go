@@ -265,3 +265,58 @@ func largestNumberWithCustomSort(nums []int) string {
 
 	return ans
 }
+
+// 495. 提莫攻击
+// https://leetcode.cn/problems/teemo-attacking/
+func findPoisonedDuration(timeSeries []int, duration int) int {
+	if len(timeSeries) == 0 {
+		return 0
+	}
+
+	ans := 0
+
+	lastEnd := 0
+	for _, series := range timeSeries {
+		thisEnd := series + duration
+		// 这一次的开始，落在上一次的范围内
+		if series < lastEnd {
+			ans += thisEnd - lastEnd
+		} else {
+			ans += duration
+		}
+
+		lastEnd = thisEnd
+	}
+
+	return ans
+}
+
+// 452. 用最少数量的箭引爆气球
+// https://leetcode.cn/problems/minimum-number-of-arrows-to-burst-balloons/
+func findMinArrowShots(points [][]int) int {
+	if len(points) == 0 {
+		return 0
+	}
+
+	slices.SortFunc(points, func(a, b []int) int {
+		if a[1] < b[1] {
+			return -1
+		} else if a[1] > b[1] {
+			return 1
+		} else {
+			return 0
+		}
+	})
+
+	ans := 1
+	right := points[0][1]
+	for i := 1; i < len(points); i++ {
+		// 左侧开始坐标 > 上一个右侧坐标，表示不重合，ans++
+		if points[i][0] > right {
+			ans++
+			right = points[i][1]
+		}
+	}
+
+	return ans
+}
