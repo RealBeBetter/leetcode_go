@@ -3,6 +3,8 @@ package btree
 import (
 	"math"
 	"slices"
+	"strconv"
+	"strings"
 )
 
 // 144. 二叉树的前序遍历
@@ -1034,4 +1036,63 @@ func isBalanced(root *TreeNode) bool {
 	}
 
 	return calcHeight(root) != -1
+}
+
+// 257. 二叉树的所有路径
+// https://leetcode.cn/problems/binary-tree-paths
+func binaryTreePaths(root *TreeNode) []string {
+	if root == nil {
+		return []string{}
+	}
+
+	res := make([]string, 0)
+	var order func(root *TreeNode, path []string, depth int)
+	order = func(root *TreeNode, path []string, depth int) {
+		if depth == len(path) {
+			path = append(path, strconv.Itoa(root.Val))
+		}
+
+		if root.Left == nil && root.Right == nil {
+			res = append(res, strings.Join(path, "->"))
+			return
+		}
+
+		if root.Left != nil {
+			order(root.Left, path, depth+1)
+		}
+		if root.Right != nil {
+			order(root.Right, path, depth+1)
+		}
+	}
+
+	order(root, []string{strconv.Itoa(root.Val)}, 0)
+	return res
+}
+
+// 257. 二叉树的所有路径
+// https://leetcode.cn/problems/binary-tree-paths
+func binaryTreePathsWithBackTrack(root *TreeNode) []string {
+	if root == nil {
+		return []string{}
+	}
+
+	res := make([]string, 0)
+	var order func(root *TreeNode, path []string)
+	order = func(root *TreeNode, path []string) {
+		path = append(path, strconv.Itoa(root.Val))
+		if root.Left == nil && root.Right == nil {
+			res = append(res, strings.Join(path, "->"))
+			return
+		}
+
+		if root.Left != nil {
+			order(root.Left, path)
+		}
+		if root.Right != nil {
+			order(root.Right, path)
+		}
+	}
+
+	order(root, make([]string, 0))
+	return res
 }
