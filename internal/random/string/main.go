@@ -245,3 +245,24 @@ func repeatedSubstringPattern(s string) bool {
 	repeatStr := s[1:] + s[:len(s)-1]
 	return strings.Contains(repeatStr, s)
 }
+
+// 3110. 字符串的分数
+// https://leetcode.cn/problems/score-of-a-string
+func scoreOfString(s string) int {
+	if s == "" {
+		return 0
+	}
+
+	ans := 0
+
+	bytes := []byte(s)
+	for i := 1; i < len(bytes); i++ {
+		score := int(bytes[i-1]) - int(bytes[i])
+		if score < 0 {
+			score = -score
+		}
+		ans += score
+	}
+
+	return ans
+}
