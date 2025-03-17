@@ -1096,3 +1096,91 @@ func binaryTreePathsWithBackTrack(root *TreeNode) []string {
 	order(root, make([]string, 0))
 	return res
 }
+
+// 100. 相同的树
+// https://leetcode.cn/problems/same-tree/
+func isSameTree(p *TreeNode, q *TreeNode) bool {
+	if p == nil && q == nil {
+		return true
+	}
+
+	same := true
+
+	var order func(p *TreeNode, q *TreeNode)
+	order = func(p *TreeNode, q *TreeNode) {
+		if p == nil && q == nil {
+			return
+		}
+
+		if p == nil || q == nil || p.Val != q.Val {
+			same = false
+			return
+		}
+
+		order(p.Left, q.Left)
+		order(p.Right, q.Right)
+	}
+
+	order(p, q)
+	return same
+}
+
+// 100. 相同的树
+// https://leetcode.cn/problems/same-tree/
+func isSameTreeWithRecursion(p *TreeNode, q *TreeNode) bool {
+	if p == nil && q == nil {
+		return true
+	}
+
+	var isSame func(p *TreeNode, q *TreeNode) bool
+	isSame = func(p *TreeNode, q *TreeNode) bool {
+		if p == nil && q == nil {
+			return true
+		}
+
+		if p == nil || q == nil || p.Val != q.Val {
+			return false
+		}
+
+		return isSameTree(p.Left, q.Left) && isSameTree(p.Right, q.Right)
+	}
+
+	return isSame(p, q)
+}
+
+// 572. 另一棵树的子树
+// https://leetcode.cn/problems/subtree-of-another-tree/description/
+func isSubtree(root *TreeNode, subRoot *TreeNode) bool {
+	if root == nil && subRoot == nil {
+		return true
+	}
+
+	var isSame func(p *TreeNode, q *TreeNode) bool
+	isSame = func(p *TreeNode, q *TreeNode) bool {
+		if p == nil && q == nil {
+			return true
+		}
+
+		if p == nil || q == nil || p.Val != q.Val {
+			return false
+		}
+
+		return isSameTree(p.Left, q.Left) && isSameTree(p.Right, q.Right)
+	}
+
+	var isSub func(p *TreeNode, q *TreeNode) bool
+	isSub = func(p *TreeNode, q *TreeNode) bool {
+		if p == nil && q == nil {
+			return true
+		}
+
+		if p == nil || q == nil {
+			return false
+		}
+
+		// 判断是否相同，是否为左子树，是否为右子树
+		return isSame(p, q) || isSub(p.Left, q) || isSub(p.Right, q)
+	}
+
+	return isSub(root, subRoot)
+}
