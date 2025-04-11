@@ -1184,3 +1184,72 @@ func isSubtree(root *TreeNode, subRoot *TreeNode) bool {
 
 	return isSub(root, subRoot)
 }
+
+// 404. 左叶子之和
+// https://leetcode.cn/problems/sum-of-left-leaves/description/
+func sumOfLeftLeaves(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+
+	var order func(root *TreeNode) int
+	order = func(root *TreeNode) int {
+		if root == nil {
+			return 0
+		}
+
+		if root.Left == nil && root.Right == nil {
+			return 0
+		}
+
+		// 左侧符合左叶子条件，则终止左侧递归
+		if root.Left != nil && root.Left.Left == nil && root.Left.Right == nil {
+			return root.Left.Val + order(root.Right)
+		}
+
+		return order(root.Left) + order(root.Right)
+	}
+
+	return order(root)
+}
+
+// 404. 左叶子之和（会超时）
+// https://leetcode.cn/problems/sum-of-left-leaves/description/
+func sumOfLeftLeavesWithLevel(root *TreeNode) int {
+	if root == nil || (root.Left == nil && root.Right == nil) {
+		return 0
+	}
+
+	sum := 0
+
+	empty := false
+	curLevel := []*TreeNode{root}
+
+	for !empty {
+		empty = true // 默认下一层为空
+		curNodes := make([]*TreeNode, 0)
+		nextLevel := make([]*TreeNode, 0)
+		for i := 0; i < len(curLevel); i++ {
+			curNodes = append(curNodes, curLevel[i])
+
+			if curLevel[i] == nil {
+				nextLevel = append(nextLevel, nil, nil)
+				continue
+			}
+
+			empty = false
+			nextLevel = append(nextLevel, curLevel[i].Left)
+			nextLevel = append(nextLevel, curLevel[i].Right)
+
+			if curLevel[i].Left == nil && curLevel[i].Right == nil {
+				if i%2 == 0 {
+					sum += curLevel[i].Val
+				}
+			}
+		}
+
+		curLevel = nextLevel
+	}
+
+	return sum
+}
