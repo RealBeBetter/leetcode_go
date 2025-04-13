@@ -1213,43 +1213,98 @@ func sumOfLeftLeaves(root *TreeNode) int {
 	return order(root)
 }
 
-// 404. 左叶子之和（会超时）
+// 404. 左叶子之和
 // https://leetcode.cn/problems/sum-of-left-leaves/description/
 func sumOfLeftLeavesWithLevel(root *TreeNode) int {
-	if root == nil || (root.Left == nil && root.Right == nil) {
+	if root == nil {
 		return 0
 	}
 
 	sum := 0
 
-	empty := false
-	curLevel := []*TreeNode{root}
+	level := []*TreeNode{root}
 
-	for !empty {
-		empty = true // 默认下一层为空
-		curNodes := make([]*TreeNode, 0)
+	for len(level) > 0 {
 		nextLevel := make([]*TreeNode, 0)
-		for i := 0; i < len(curLevel); i++ {
-			curNodes = append(curNodes, curLevel[i])
-
-			if curLevel[i] == nil {
-				nextLevel = append(nextLevel, nil, nil)
-				continue
+		for i := 0; i < len(level); i++ {
+			node := level[i]
+			if node.Left != nil {
+				if node.Left.Left == nil && node.Left.Right == nil {
+					sum += node.Left.Val
+				} else {
+					nextLevel = append(nextLevel, node.Left)
+				}
 			}
 
-			empty = false
-			nextLevel = append(nextLevel, curLevel[i].Left)
-			nextLevel = append(nextLevel, curLevel[i].Right)
-
-			if curLevel[i].Left == nil && curLevel[i].Right == nil {
-				if i%2 == 0 {
-					sum += curLevel[i].Val
+			if node.Right != nil {
+				if !(node.Right.Left == nil && node.Right.Right == nil) {
+					nextLevel = append(nextLevel, node.Right)
 				}
 			}
 		}
 
-		curLevel = nextLevel
+		level = nextLevel
 	}
 
 	return sum
+}
+
+// 513. 找树左下角的值
+// https://leetcode.cn/problems/find-bottom-left-tree-value
+func findBottomLeftValue(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+
+	ans := 0
+
+	level := []*TreeNode{root}
+	for len(level) > 0 {
+		nextLevel := make([]*TreeNode, 0)
+		for i := 0; i < len(level); i++ {
+			if i == 0 && level[i] != nil {
+				ans = level[i].Val
+			}
+
+			if level[i].Left != nil {
+				nextLevel = append(nextLevel, level[i].Left)
+			}
+
+			if level[i].Right != nil {
+				nextLevel = append(nextLevel, level[i].Right)
+			}
+		}
+
+		level = nextLevel
+	}
+
+	return ans
+}
+
+// 513. 找树左下角的值
+// https://leetcode.cn/problems/find-bottom-left-tree-value
+func findBottomLeftValueWithRecursion(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+
+	globalDepth, ans := 0, 0
+
+	var order func(root *TreeNode, depth int)
+	order = func(root *TreeNode, depth int) {
+		if root == nil {
+			return
+		}
+
+		if globalDepth == depth {
+			globalDepth++
+			ans = root.Val
+		}
+
+		order(root.Left, depth+1)
+		order(root.Right, depth+1)
+	}
+
+	order(root, 0)
+	return ans
 }
