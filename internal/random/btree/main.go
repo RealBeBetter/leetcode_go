@@ -1308,3 +1308,71 @@ func findBottomLeftValueWithRecursion(root *TreeNode) int {
 	order(root, 0)
 	return ans
 }
+
+// 112. 路径总和
+// https://leetcode.cn/problems/path-sum
+func hasPathSum(root *TreeNode, targetSum int) bool {
+	if root == nil {
+		return false
+	}
+
+	res := false
+
+	// 使用中序遍历
+	var order func(root *TreeNode, sum int)
+	order = func(root *TreeNode, sum int) {
+		sum += root.Val
+		if root.Left == nil && root.Right == nil {
+			if sum == targetSum {
+				res = true
+				return
+			}
+		}
+
+		if root.Left != nil {
+			order(root.Left, sum)
+		}
+
+		if root.Right != nil {
+			order(root.Right, sum)
+		}
+	}
+
+	order(root, 0)
+	return res
+}
+
+// 112. 路径总和
+// https://leetcode.cn/problems/path-sum
+func hasPathSumWithBackTrace(root *TreeNode, targetSum int) bool {
+	if root == nil {
+		return false
+	}
+
+	var traverse func(root *TreeNode, sum int) bool
+	traverse = func(root *TreeNode, sum int) bool {
+		if root.Left == nil && root.Right == nil {
+			return sum == 0
+		}
+
+		if root.Left != nil {
+			sum -= root.Left.Val
+			if traverse(root.Left, sum) {
+				return true
+			}
+			sum += root.Left.Val
+		}
+
+		if root.Right != nil {
+			sum -= root.Right.Val
+			if traverse(root.Right, sum) {
+				return true
+			}
+			sum += root.Right.Val
+		}
+
+		return false
+	}
+
+	return traverse(root, targetSum-root.Val)
+}
