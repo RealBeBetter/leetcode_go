@@ -1376,3 +1376,43 @@ func hasPathSumWithBackTrace(root *TreeNode, targetSum int) bool {
 
 	return traverse(root, targetSum-root.Val)
 }
+
+// 113. 路径总和 II
+// https://leetcode.cn/problems/path-sum-ii/description/
+func pathSum(root *TreeNode, targetSum int) [][]int {
+	ans := make([][]int, 0)
+	if root == nil {
+		return ans
+	}
+
+	var order func(root *TreeNode, path *[]int, sum int)
+	order = func(root *TreeNode, path *[]int, sum int) {
+		sum += root.Val
+		*path = append(*path, root.Val)
+
+		if root.Left == nil && root.Right == nil {
+			if sum == targetSum {
+				temp := make([]int, 0, len(*path))
+				for _, val := range *path {
+					temp = append(temp, val)
+				}
+				ans = append(ans, temp)
+			}
+			return
+		}
+
+		if root.Left != nil {
+			order(root.Left, path, sum)
+			*path = (*path)[:len(*path)-1]
+		}
+
+		if root.Right != nil {
+			order(root.Right, path, sum)
+			*path = (*path)[:len(*path)-1]
+		}
+	}
+
+	path := make([]int, 0)
+	order(root, &path, 0)
+	return ans
+}
