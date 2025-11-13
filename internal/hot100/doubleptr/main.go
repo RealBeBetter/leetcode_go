@@ -1,6 +1,8 @@
 package doubleptr
 
-import "sort"
+import (
+	"sort"
+)
 
 // 283. 移动零
 // https://leetcode.cn/problems/move-zeroes/description/
@@ -92,5 +94,106 @@ func threeSum(nums []int) [][]int {
 		}
 	}
 
+	return res
+}
+
+// 560. 和为 K 的子数组
+// https://leetcode.cn/problems/subarray-sum-equals-k/description
+func subarraySum(nums []int, k int) int {
+	prefixSum := 0
+	prefixSumMap := map[int]int{0: 1}
+	res := 0
+
+	for _, num := range nums {
+		prefixSum += num
+
+		if cnt, ok := prefixSumMap[prefixSum-k]; ok {
+			res += cnt
+		}
+
+		prefixSumMap[prefixSum]++
+	}
+
+	return res
+}
+
+// 560. 和为 K 的子数组
+// https://leetcode.cn/problems/subarray-sum-equals-k/description
+func subarraySumWithDoublePtr(nums []int, k int) int {
+	// 时间复杂度比较高
+	res := 0
+	for i := 0; i < len(nums); i++ {
+		sum := 0
+		for j := i; j >= 0; j-- {
+			sum += nums[j]
+			if sum == k {
+				res++
+			}
+		}
+	}
+
+	return res
+}
+
+// 560. 和为 K 的子数组
+// https://leetcode.cn/problems/subarray-sum-equals-k/description
+func subarraySumWithDoublePtrReverse(nums []int, k int) int {
+	// 时间复杂度比较高
+	res := 0
+	for i := 0; i < len(nums); i++ {
+		sum := 0
+		for j := i; j < len(nums); j++ {
+			sum += nums[j]
+			if sum == k {
+				res++
+			}
+		}
+	}
+
+	return res
+}
+
+// 57. 插入区间
+// https://leetcode.cn/problems/insert-interval/description/
+func insert(intervals [][]int, newInterval []int) [][]int {
+	maxInt := func(a, b int) int {
+		if a > b {
+			return a
+		}
+		return b
+	}
+
+	minInt := func(a, b int) int {
+		if a < b {
+			return a
+		}
+		return b
+	}
+
+	res := make([][]int, 0, len(intervals))
+
+	newStart := newInterval[0]
+	newEnd := newInterval[1]
+
+	for i := 0; i < len(intervals); i++ {
+		start := intervals[i][0]
+		end := intervals[i][1]
+
+		// 新区间在左边，已经完成合并，从当前节点返回
+		if newEnd < start {
+			res = append(res, []int{newStart, newEnd})
+			res = append(res, intervals[i:]...)
+			return res
+		} else if newStart > end {
+			// 新区间在右边，添加当前区间
+			res = append(res, []int{start, end})
+		} else {
+			// 新区间有重叠，继续计算下一个区间
+			newStart = minInt(start, newStart)
+			newEnd = maxInt(end, newEnd)
+		}
+	}
+
+	res = append(res, []int{newStart, newEnd})
 	return res
 }
