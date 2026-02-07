@@ -1,6 +1,7 @@
 package doubleptr
 
 import (
+	"slices"
 	"sort"
 )
 
@@ -196,4 +197,36 @@ func insert(intervals [][]int, newInterval []int) [][]int {
 
 	res = append(res, []int{newStart, newEnd})
 	return res
+}
+
+// 56. 合并区间
+// https://leetcode.cn/problems/merge-intervals
+func merge(intervals [][]int) [][]int {
+	slices.SortFunc(intervals, func(a, b []int) int {
+		if a[0] < b[0] {
+			return -1
+		}
+		return 1
+	})
+
+	ans := make([][]int, 0, len(intervals))
+
+	left, right := intervals[0][0], intervals[0][1]
+
+	for _, interval := range intervals {
+		// 分三种情况，左、重叠、右，但是因为已排序，所以只需考虑前面两种
+
+		// 在左边
+		if right < interval[0] {
+			ans = append(ans, []int{left, right})
+			left, right = interval[0], interval[1]
+			continue
+		}
+
+		// 重叠
+		left, right = min(left, interval[0]), max(right, interval[1])
+	}
+
+	ans = append(ans, []int{left, right})
+	return ans
 }
